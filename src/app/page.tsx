@@ -69,7 +69,6 @@ const Login: React.FC = () => {
                   id="email"
                   type="email"
                   value={email}
-                  style={{ width: '100%' }}
                   placeholder="Enter your email"
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -80,7 +79,6 @@ const Login: React.FC = () => {
                   id="password"
                   type={!visible ? 'password' : 'text'}
                   value={password}
-                  style={{ width: '100%' }}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
                 />

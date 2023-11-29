@@ -52,7 +52,6 @@ const NewPassword: React.FC = () => {
                   id="password"
                   type={!visible[0] ? 'password' : 'text'}
                   value={newPassword}
-                  style={{ width: '100%' }}
                   placeholder="Enter your password"
                   onChange={(e) => setNewPassword(e.target.value)}
                 />
@@ -69,7 +68,6 @@ const NewPassword: React.FC = () => {
                   id="confirmPassword"
                   type={!visible[1] ? 'password' : 'text'}
                   value={confirmNewPassword}
-                  style={{ width: '100%' }}
                   placeholder="Confirm your password"
                   onChange={(e) => setConfirmNewPassword(e.target.value)}
                 />

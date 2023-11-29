@@ -66,12 +66,7 @@ const VerificationCode: React.FC = () => {
   }, [])
 
   const tete = () => {
-    const isCodeMatch = randomCode === code.join('').toUpperCase()
-
-    if (isCodeMatch) {
-      router.push('/newPassword')
-    }
-    console.log(isCodeMatch)
+    router.push('/forgotPassword/newPassword')
   }
 
   return (
