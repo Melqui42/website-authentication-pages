@@ -1,129 +1,136 @@
 'use client'
 
 import { useState } from 'react'
-import * as Bi from 'react-icons/bi'
-import * as Fa from 'react-icons/fa'
-import * as Fc from 'react-icons/fc'
 
 import Link from 'next/link'
 
+import Container from '@/components/Container'
+import Card from '@/components/Container/Card'
 import Form from '@/components/Form'
 import Field from '@/components/Form/Field/'
+import Icon from '@/utils/iconImport'
 
-import { motion, AnimatePresence, useIsPresent } from 'framer-motion'
+import { Formik } from 'formik'
+
+import * as Yup from 'yup'
 
 import * as C from './styled'
 
+interface FormValuesProps {
+  email: string
+  password: string
+}
+
+interface SubmittingProps {
+  setSubmitting: (isSubmitting: boolean) => void
+}
+
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [visible, setVisible] = useState(false)
 
-  const buttonClassName = email === '' || password === '' ? 'closed' : 'open'
+  const initialValues: FormValuesProps = {
+    email: '',
+    password: '',
+  }
 
-  const isPresent = useIsPresent()
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email('Endereço de email invalido')
+      .required('O e-mail é obrigatório'),
+    password: Yup.string().required('Senha requerida'),
+  })
+
+  const handleSubmit = (
+    values: FormValuesProps,
+    { setSubmitting }: SubmittingProps,
+  ) => {
+    console.log(values)
+    setSubmitting(false)
+  }
 
   return (
-    <C.Page>
-      <AnimatePresence>
-        <motion.div
-          className="container"
-          style={{
-            position: isPresent ? 'static' : 'absolute',
-          }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 900, damping: 40 }}
-          layout
-        >
-          <div className="content">
-            <div className="center">
-              <div className="logo">
-                <Bi.BiChip className="icon" />
-                <p>Event Jungle</p>
-              </div>
-              <div className="text">
-                <h1 className="title">Hey There!</h1>
-                <p className="description">
-                  Welcome Back.
-                  <br /> You are just one step away to your feed.
-                </p>
-              </div>
-              <div className="createAccount">
-                <p>Don&apos;t have on account?</p>
-                <Link href="/signUp">SIGN UP</Link>
-              </div>
-            </div>
-          </div>
-          <Form.Root
-            style={{
-              borderRadius: '0rem 1rem 1rem 0rem',
-            }}
-          >
-            <Form.Header title="SIGN IN" />
+    <Container heightContainer="450px">
+      <Card.Root style={{ borderRadius: '1rem 0rem 0rem 1rem' }}>
+        <Card.Logo title="Event Jungle" icon={Icon.Bi.BiChip} />
+        <Card.Content>
+          <Card.Title>Bem vindo de volta!</Card.Title>
+          <Card.Description>
+            Você está a apenas um passo do seu feed.
+          </Card.Description>
+        </Card.Content>
+        <Card.Action text="Não tem em conta?">
+          <Link href="/signup">REGISTRE-SE</Link>
+        </Card.Action>
+      </Card.Root>
+      <Formik
+        onSubmit={handleSubmit}
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+      >
+        {({ values, isSubmitting }) => (
+          <Form.Root style={{ borderRadius: '0rem 1rem 1rem 0rem' }}>
+            <Form.Header title="ENTRAR" />
             <Form.Content>
               <Field.Root>
+                <Field.ErrorMessage name="email" />
                 <Field.Label htmlFor="email">Email</Field.Label>
-                <Field.Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  placeholder="Enter your email"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+                <Field.Input name="email" placeholder="Digite seu e-mail" />
               </Field.Root>
               <Field.Root>
-                <Field.Label htmlFor="password">Password</Field.Label>
+                <Field.ErrorMessage name="password" />
+                <Field.Label htmlFor="password">Senha</Field.Label>
                 <Field.Input
-                  id="password"
+                  name="password"
+                  placeholder="Coloque sua senha"
                   type={!visible ? 'password' : 'text'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
                 />
                 <Field.Action
+                  type="button"
                   visible={!visible}
                   onClick={() => setVisible(!visible)}
                 />
               </Field.Root>
             </Form.Content>
             <Form.Row>
-              <Form.RememberMe />
+              <Form.RememberMe>Mantenha-me conectado</Form.RememberMe>
               <Link
-                href="/forgotPassword"
-                style={{ width: 230, color: '#ff9400' }}
+                href="/forgotpassword"
+                style={{ width: 285, color: '#ff9400' }}
               >
-                Forgot Password?
+                Esqueceu sua senha?
               </Link>
             </Form.Row>
-            <Form.Action type="submit" conditional={buttonClassName}>
-              LOGIN
+            <Form.Action
+              type="button"
+              disabled={isSubmitting}
+              className={!values.email || !values.password ? 'closed' : 'open'}
+            >
+              ENTRAR
             </Form.Action>
-            <div className="socialMediaSignUp">
-              <p>Or, Use socil media to sign in</p>
+            <C.socialMedia>
+              <p>Ou use a mídia social para fazer login</p>
               <ul className="list">
                 <li className="item">
                   <button>
-                    <Fc.FcGoogle className="icon" />
+                    <Icon.Fc.FcGoogle className="icon" />
                   </button>
                 </li>
                 <li className="item">
                   <button>
-                    <Fa.FaGithub className="icon" />
+                    <Icon.Fa.FaGithub className="icon" />
                   </button>
                 </li>
                 <li className="item">
                   <button>
-                    <Fa.FaFacebook className="icon" />
+                    <Icon.Fa.FaFacebook className="icon" />
                   </button>
                 </li>
               </ul>
-            </div>
+            </C.socialMedia>
           </Form.Root>
-        </motion.div>
-      </AnimatePresence>
-    </C.Page>
+        )}
+      </Formik>
+    </Container>
   )
 }
 

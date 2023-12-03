@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import StyledComponentsRegistry from '../registry'
 
 export const metadata: Metadata = {
-  title: 'Sign Up',
+  title: 'Cadastro | Event Jungle',
 }
 
 export default function RootLayout({

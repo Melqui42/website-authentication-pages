@@ -4,19 +4,10 @@ import * as C from './styled'
 
 interface FormActionProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
-  conditional: string
 }
 
-const FormAction: React.FC<FormActionProps> = ({
-  children,
-  conditional,
-  ...rest
-}) => {
-  return (
-    <C.Action className={`submitButton ${conditional}`} {...rest}>
-      {children}
-    </C.Action>
-  )
+const FormAction: React.FC<FormActionProps> = ({ children, ...rest }) => {
+  return <C.Action {...rest}>{children}</C.Action>
 }
 
 export default FormAction

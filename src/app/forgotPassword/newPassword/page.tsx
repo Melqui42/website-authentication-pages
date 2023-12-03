@@ -5,55 +5,74 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
+import Container from '@/components/Container'
 import Form from '@/components/Form'
 import Field from '@/components/Form/Field'
 
-import { motion, AnimatePresence, useIsPresent } from 'framer-motion'
+import { Formik } from 'formik'
 
-import * as C from './styled'
+import * as Yup from 'yup'
+
+interface FormValuesProps {
+  password: string
+  confirmPassword: string
+}
+
+interface SubmittingProps {
+  setSubmitting: (isSubmitting: boolean) => void
+}
 
 const NewPassword: React.FC = () => {
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmNewPassword, setConfirmNewPassword] = useState('')
+  const router = useRouter()
   const [visible, setVisible] = useState<boolean[]>([false, false])
 
-  const buttonClassName = newPassword === '' ? 'closed' : 'open'
+  const initialValues: FormValuesProps = {
+    password: '',
+    confirmPassword: '',
+  }
 
-  const isPresent = useIsPresent()
+  const validationSchema = Yup.object({
+    password: Yup.string()
+      .min(6, 'A senha deve ter pelo menos 6 caracteres')
+      .required('Senha requerida'),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password'), undefined], 'As senhas devem corresponder')
+      .required('Confirmar senha é obrigatório'),
+  })
+
+  const handleSubmit = (
+    values: FormValuesProps,
+    { setSubmitting }: SubmittingProps,
+  ) => {
+    console.log(values)
+    setSubmitting(false)
+
+    router.push('/')
+  }
 
   return (
-    <C.Page>
-      <AnimatePresence>
-        <motion.div
-          className="container"
-          style={{
-            position: isPresent ? 'static' : 'absolute',
-          }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 900, damping: 40 }}
-          layout
-        >
-          <Form.Root
-            style={{ borderRadius: '1rem', width: '350px', height: '400px' }}
-          >
-            <div className="top">
-              <Form.Header title="Enter New Password" subTitle="" />
-              <p>
-                Your new password must be different from the password you used
-                previously.
-              </p>
-            </div>
+    <Container heightContainer="350px">
+      <Formik
+        onSubmit={handleSubmit}
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+      >
+        {({ values, isSubmitting }) => (
+          <Form.Root style={{ borderRadius: '1rem' }}>
+            <Form.Header
+              title="Insira a nova senha"
+              subTitle="Sua nova senha deve ser diferente da senha que você usou
+              anteriormente."
+            />
             <Form.Content>
               <Field.Root>
-                <Field.Label htmlFor="password">Password</Field.Label>
+                <Field.ErrorMessage name="password" />
+                <Field.Label htmlFor="password">Senha</Field.Label>
                 <Field.Input
                   id="password"
+                  name="password"
                   type={!visible[0] ? 'password' : 'text'}
-                  value={newPassword}
-                  placeholder="Enter your password"
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Coloque sua senha"
                 />
                 <Field.Action
                   visible={!visible[0]}
@@ -61,15 +80,15 @@ const NewPassword: React.FC = () => {
                 />
               </Field.Root>
               <Field.Root>
+                <Field.ErrorMessage name="confirmPassword" />
                 <Field.Label htmlFor="confirmPassword">
-                  Confirm Password
+                  Confirmar Senha
                 </Field.Label>
                 <Field.Input
                   id="confirmPassword"
+                  name="confirmPassword"
                   type={!visible[1] ? 'password' : 'text'}
-                  value={confirmNewPassword}
-                  placeholder="Confirm your password"
-                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  placeholder="Confirme sua senha"
                 />
                 <Field.Action
                   visible={!visible[1]}
@@ -77,14 +96,22 @@ const NewPassword: React.FC = () => {
                 />
               </Field.Root>
             </Form.Content>
-            <Form.Action conditional={buttonClassName}>CONFIRM</Form.Action>
+            <Form.Action
+              type="submit"
+              disabled={isSubmitting}
+              className={
+                !values.password || !values.confirmPassword ? 'closed' : 'open'
+              }
+            >
+              CONFIRMAR
+            </Form.Action>
             <Link href="/" style={{ color: '#ff9400' }}>
-              Back
+              Voltar
             </Link>
           </Form.Root>
-        </motion.div>
-      </AnimatePresence>
-    </C.Page>
+        )}
+      </Formik>
+    </Container>
   )
 }
 

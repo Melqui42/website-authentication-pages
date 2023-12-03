@@ -1,10 +1,16 @@
+import { ReactNode } from 'react'
+
 import * as C from './styled'
 
-const FormRememberMe: React.FC = () => {
+interface FormRememberMeProps {
+  children: ReactNode
+}
+
+const FormRememberMe: React.FC<FormRememberMeProps> = ({ children }) => {
   return (
     <C.RememberMe htmlFor="rememberMe">
       <input type="checkbox" name="" id="rememberMe" />
-      Keep me logged in
+      {children}
     </C.RememberMe>
   )
 }

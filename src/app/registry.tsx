@@ -5,6 +5,7 @@ import { useState, ReactNode } from 'react'
 import { useServerInsertedHTML } from 'next/navigation'
 
 import GlobalStyled from '@/styles/globalStyled'
+
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components'
 
 export default function StyledComponentsRegistry({

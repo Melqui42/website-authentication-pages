@@ -1,122 +1,138 @@
 'use client'
 
 import { useState } from 'react'
-import * as Bi from 'react-icons/bi'
 
 import Link from 'next/link'
 
+import Container from '@/components/Container'
+import Card from '@/components/Container/Card'
 import Form from '@/components/Form'
 import Field from '@/components/Form/Field'
+import Icon from '@/utils/iconImport'
 
-import axios from 'axios'
-import { motion, AnimatePresence, useIsPresent } from 'framer-motion'
+import { Formik } from 'formik'
 
-import * as C from './styled'
+import * as Yup from 'yup'
+
+interface FormValuesProps {
+  name: string
+  email: string
+  password: string
+}
+
+interface SubmittingProps {
+  setSubmitting: (isSubmitting: boolean) => void
+}
 
 const SignUp: React.FC = () => {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [visible, setVisible] = useState<boolean>(false)
+  const [isChecked, setIsChecked] = useState<boolean>(false)
 
-  const buttonClassName =
-    name === '' || email === '' || password === '' ? 'closed' : 'open'
-
-  const handleDataSending = async () => {
-    if (name !== '' && email !== '' && password !== '') {
-      try {
-        const response = await axios.post('http://localhost:8080/signUp', {
-          name,
-          email,
-          password,
-        })
-        console.log('Dados enviados com sucesso', response.data)
-      } catch (error) {
-        console.error('Erro ao enviar dados', error)
-      }
-    }
+  const initialValues: FormValuesProps = {
+    name: '',
+    email: '',
+    password: '',
   }
 
-  const isPresent = useIsPresent()
+  const validationSchema = Yup.object({
+    name: Yup.string().required('Nome é obrigatório'),
+    email: Yup.string()
+      .email('Endereço de e-mail inválido')
+      .required('E-mail é obrigatório'),
+    password: Yup.string()
+      .min(6, 'A senha deve ter pelo menos 6 caracteres')
+      .required('Senha é obrigatória'),
+  })
+
+  const handleSubmit = (
+    values: FormValuesProps,
+    { setSubmitting }: SubmittingProps,
+  ) => {
+    console.log(values)
+    setSubmitting(false)
+  }
 
   return (
-    <C.Page>
-      <AnimatePresence>
-        <motion.div
-          className="container"
-          style={{
-            position: isPresent ? 'static' : 'absolute',
-          }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 900, damping: 40 }}
-          layout
-        >
+    <Container heightContainer="450px">
+      <Formik
+        onSubmit={handleSubmit}
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+      >
+        {({ values, isSubmitting }) => (
           <Form.Root style={{ borderRadius: '1rem 0rem 0rem 1rem' }}>
-            <Form.Header title="Sign Up" />
+            <Form.Header title="CRIE SUA CONTA" />
             <Form.Content>
               <Field.Root>
-                <Field.Label htmlFor="name">Name</Field.Label>
+                <Field.ErrorMessage name="name" />
+                <Field.Label htmlFor="name">Nome</Field.Label>
                 <Field.Input
                   id="name"
                   type="text"
-                  value={name}
-                  placeholder="Enter your name"
-                  onChange={(e) => setName(e.target.value)}
+                  name="name"
+                  placeholder="Digite seu nome"
                 />
               </Field.Root>
               <Field.Root>
+                <Field.ErrorMessage name="email" />
                 <Field.Label htmlFor="email">Email</Field.Label>
                 <Field.Input
                   id="email"
                   type="email"
-                  value={email}
-                  placeholder="Enter your email"
-                  onChange={(e) => setEmail(e.target.value)}
+                  name="email"
+                  placeholder="Digite seu e-mail"
                 />
               </Field.Root>
               <Field.Root>
-                <Field.Label htmlFor="password">Password</Field.Label>
+                <Field.ErrorMessage name="password" />
+                <Field.Label htmlFor="password">Senha</Field.Label>
                 <Field.Input
                   id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
+                  name="password"
+                  placeholder="Coloque sua senha"
+                  type={!visible ? 'password' : 'text'}
                 />
-                <Field.Action visible={true} />
+                <Field.Action
+                  type="button"
+                  visible={!visible}
+                  onClick={() => setVisible(!visible)}
+                />
               </Field.Root>
-              <Form.AcceptTerms />
+              <Form.AcceptTerms
+                isChecked={isChecked}
+                setIsChecked={setIsChecked}
+              >
+                Estou de acordo com <span>termos e Condições</span> e{' '}
+                <span>política de Privacidade</span>
+              </Form.AcceptTerms>
             </Form.Content>
             <Form.Action
               type="submit"
-              onClick={handleDataSending}
-              conditional={buttonClassName}
+              disabled={isSubmitting || !isChecked}
+              className={
+                !isChecked || !values.name || !values.email || !values.password
+                  ? 'closed'
+                  : 'open'
+              }
             >
-              CONTINUE
+              CONTINUAR
             </Form.Action>
           </Form.Root>
-          <div className="content">
-            <div className="center">
-              <div className="logo">
-                <Bi.BiChip className="icon" />
-                <p>Event Jungle</p>
-              </div>
-              <div className="text">
-                <h1 className="title">Hey There!</h1>
-                <p className="description">
-                  Are you new here?
-                  <br /> You are just one step away to your feed.
-                </p>
-              </div>
-              <div className="createAccount">
-                <p>Already have an account?</p>
-                <Link href="/">SIGN IN</Link>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </AnimatePresence>
-    </C.Page>
+        )}
+      </Formik>
+      <Card.Root style={{ borderRadius: '0rem 1rem 1rem 0rem' }}>
+        <Card.Logo title="Event Jungle" icon={Icon.Bi.BiChip} />
+        <Card.Content>
+          <Card.Title>Mais de 600 mil boosters já estão conectados.</Card.Title>
+          <Card.Description>
+            Junte-se a milhares de devs e acelere na direção dos seus objetivos
+          </Card.Description>
+        </Card.Content>
+        <Card.Action text="Você já tem uma conta?">
+          <Link href="/">ENTRAR</Link>
+        </Card.Action>
+      </Card.Root>
+    </Container>
   )
 }
 

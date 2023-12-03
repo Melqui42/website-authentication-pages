@@ -1,11 +1,12 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { Form } from 'formik'
+
 import styled from 'styled-components'
 
-export const Root = styled.div`
+export const Root = styled(Form)`
   gap: 1.5rem;
-  width: 340px;
+  width: 390px;
   height: 100%;
   display: flex;
   padding: 1.5rem;
@@ -26,8 +27,8 @@ export const Header = styled.div`
   }
 
   .subTitle {
-    color: #7065ff;
-    font-weight: lighter;
+    color: #b8b7bc;
+    text-align: center;
   }
 `
 
@@ -36,6 +37,7 @@ export const Action = styled.button`
   color: #ffffff;
   padding: 0.8rem;
   font-size: 1rem;
+  transition: 0.3s;
   font-weight: bold;
   border-radius: 0.8rem;
   background-color: #7065ff;
@@ -60,6 +62,7 @@ export const RememberMe = styled.label`
   width: 100%;
   display: flex;
   color: #b8b7bc;
+  font-size: 0.8rem;
   align-items: center;
 
   input {
@@ -73,7 +76,7 @@ export const AcceptTerms = styled.label`
   width: 100%;
   display: flex;
   color: #b8b7bc;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   align-items: center;
 
   input {

@@ -1,73 +1,87 @@
 'use client'
 
-import { useState } from 'react'
-
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
+import Container from '@/components/Container'
 import Form from '@/components/Form'
 import Field from '@/components/Form/Field'
 
-import { motion, AnimatePresence, useIsPresent } from 'framer-motion'
+import { Formik } from 'formik'
 
-import * as C from './styled'
+import * as Yup from 'yup'
+
+interface FormValuesProps {
+  email: string
+}
+
+interface SubmittingProps {
+  setSubmitting: (isSubmitting: boolean) => void
+}
 
 const Forgot: React.FC = () => {
   const router = useRouter()
-  const [email, setEmail] = useState('')
 
-  const buttonClassName = email === '' ? 'closed' : 'open'
+  const initialValues: FormValuesProps = {
+    email: '',
+  }
 
-  const isPresent = useIsPresent()
+  const validationScrema = Yup.object({
+    email: Yup.string()
+      .email('Invalid email address')
+      .required('Email is required'),
+  })
+
+  const handleSubmit = (
+    values: FormValuesProps,
+    { setSubmitting }: SubmittingProps,
+  ) => {
+    console.log(values)
+    setSubmitting(false)
+
+    router.push('/forgotpassword/emailverification')
+  }
 
   return (
-    <C.Page>
-      <AnimatePresence>
-        <motion.div
-          className="container"
-          style={{
-            position: isPresent ? 'static' : 'absolute',
-          }}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 900, damping: 40 }}
-          layout
-        >
+    <Container heightContainer="280px">
+      <Formik
+        onSubmit={handleSubmit}
+        initialValues={initialValues}
+        validationSchema={validationScrema}
+      >
+        {({ values, isSubmitting }) => (
           <Form.Root style={{ borderRadius: '1rem' }}>
-            <div className="top">
-              <Form.Header title="Forgot Password" subTitle="" />
-              <p className="text">
-                Enter the email address you used when registering and we will
-                send you instructions for resetting your password.
-              </p>
-            </div>
-
+            <Form.Header
+              title="Recuperar senha"
+              subTitle="Digite o endereço de e-mail que você usou ao se registrar e nós
+              enviar-lhe instruções para redefinir sua senha."
+            />
             <Form.Content>
               <Field.Root>
+                <Field.ErrorMessage name="email" />
                 <Field.Label htmlFor="email">Email</Field.Label>
                 <Field.Input
                   id="email"
                   type="email"
-                  value={email}
-                  placeholder="Enter your email"
-                  onChange={(e) => setEmail(e.target.value)}
+                  name="email"
+                  placeholder="Digite seu e-mail"
                 />
               </Field.Root>
             </Form.Content>
             <Form.Action
-              onClick={() => router.push('/forgotPassword/verificationCode')}
-              conditional={buttonClassName}
+              type="submit"
+              disabled={isSubmitting}
+              className={!values.email ? 'closed' : 'open'}
             >
-              SEND
+              ENVIAR
             </Form.Action>
             <Link href="/" style={{ color: '#ff9400' }}>
-              Back
+              Voltar
             </Link>
           </Form.Root>
-        </motion.div>
-      </AnimatePresence>
-    </C.Page>
+        )}
+      </Formik>
+    </Container>
   )
 }
 
