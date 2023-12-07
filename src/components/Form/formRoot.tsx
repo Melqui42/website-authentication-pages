@@ -1,8 +1,10 @@
-import { HTMLAttributes, ReactNode } from 'react'
+import { ReactNode } from 'react'
+
+import { FormikFormProps } from 'formik'
 
 import * as C from './styled'
 
-interface FormRootProps extends HTMLAttributes<HTMLDivElement> {
+interface FormRootProps extends FormikFormProps {
   children: ReactNode
 }
 

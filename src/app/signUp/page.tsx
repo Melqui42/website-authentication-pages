@@ -75,7 +75,7 @@ const SignUp: React.FC = () => {
               </Field.Root>
               <Field.Root>
                 <Field.ErrorMessage name="email" />
-                <Field.Label htmlFor="email">Email</Field.Label>
+                <Field.Label htmlFor="email">E-mail</Field.Label>
                 <Field.Input
                   id="email"
                   type="email"
